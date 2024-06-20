@@ -22,8 +22,12 @@ def main():
                 print("Invalid input. Please type 'random' or an NPC number.")
                 continue
 
-        user_message = input("You: ").strip()
-        game.interact_with_npc(npc_id, user_message)
+        while True:
+            user_message = input("You: ").strip()
+            if user_message.lower() == "quit":
+                break
+            #print("{npc_id}: ", game.interact_with_npc(npc_id, user_message))
+            print(game.interact_with_npc(npc_id, user_message))
         game.display_npc_conversation(npc_id)
 
         print("Choose from the following NPCs or say 'random':")
