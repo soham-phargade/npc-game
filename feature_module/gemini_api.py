@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-#api_key = os.getenv("GEMINI_API_KEY")
-api_key = ""
+api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 # Create the model
@@ -35,8 +34,10 @@ model = genai.GenerativeModel(
 
 def gemini(message):
     chat_session = model.start_chat(
-        history=[ # we can include chat history here
-        ]
+      history=[] # Chat history
     )
-    response = chat_session.send_message("INSERT_INPUT_HERE")
+    response = chat_session.send_message(message)
     return response.text
+  
+if __name__ == "__main__":
+  print(gemini(input("Enter your message: ")))
