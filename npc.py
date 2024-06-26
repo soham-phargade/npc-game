@@ -1,6 +1,7 @@
 from ursina import *
 from player import Player
 from conversation import get_user_input
+from feature_module.gemini_api import gemini
 
 class NPC(Entity):
     def __init__(self, player, position=(0, 0, 0), name="untitled", **kwargs):
@@ -39,7 +40,7 @@ class NPC(Entity):
                 
             if held_keys['left mouse']:
                 response = self.start_conversation()
-                self.speech.text = response
+                self.speech.text = gemini(response)
                 self.is_talking = True
 
     def start_conversation(self):
@@ -53,7 +54,7 @@ class NPC(Entity):
 
 if __name__ == '__main__':
     app = Ursina()
-    player = Player(position=(0, 10, 5))
+    player = Player(position=(0, 20, 5))
     npc1 = NPC(player, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
     
     box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
@@ -62,7 +63,7 @@ if __name__ == '__main__':
 
     Sky()
     
-    ground = Entity(model='plane', scale=(100, 0, 100), texture='grass', collider='box')
+    ground = Entity(model='plane', scale=(100, -1, 100), texture='grass', collider='box')
 
     # Adding slopes
     slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), position=(10, 0, 0), texture='grass', collider='box')
@@ -71,5 +72,6 @@ if __name__ == '__main__':
     def input(key):
         if key == 'escape':
             application.quit()
+    
             
     app.run()
