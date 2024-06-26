@@ -1,5 +1,6 @@
 from ursina import *
 from player import Player
+from conversation import get_user_input
 
 class NPC(Entity):
     def __init__(self, player, position=(0, 0, 0), name="untitled", **kwargs):
@@ -7,9 +8,10 @@ class NPC(Entity):
         self.player = player
         self.name = name
         self.gravity = 0.1
+        self.is_talking = False
+        self.speech = Text('', origin=(0,17,0), color = color.black)
         
         self.dialogue_box = None
-        self.is_talking = False
 
     def update(self):
         # Applies gravity to NPC
@@ -26,23 +28,37 @@ class NPC(Entity):
         # Move NPC towards player
         if distance_xz(self.position, self.player.position) > 5:
             self.position += direction * 0.1
+            self.speech.text = ''
+            self.is_talking = False
 
         # Check for interaction
         if distance_xz(self.position, self.player.position) <= 2:  # Interaction distance
             if held_keys['e'] and not self.is_talking:
-                self.start_conversation()
+                self.speech.text = f'my name is {self.name}'
+                self.is_talking = True
+                
+            if held_keys['left mouse']:
+                response = self.start_conversation()
+                self.speech.text = response
+                self.is_talking = True
 
     def start_conversation(self):
-        self.is_talking = True
-        self.dialogue_box = Text(text="Type something and press Enter:", position=(-0.5, -0.3), origin=(0,0), background=True, scale=1.5)
-        self.text_input = InputField(scale=(1, 0.1), character_limit=250, text='', active=True)
-        self.text_input.active = True
+        user_input = get_user_input()
+        if user_input:
+            return user_input
+        else:
+            return ""
+        
 
 
 if __name__ == '__main__':
     app = Ursina()
-    player = Player()
-    npc1 = NPC(player, model='cube', position=(0, 10, 0), collider='box', name='NPC1')
+    player = Player(position=(0, 10, 5))
+    npc1 = NPC(player, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
+    
+    box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
+    text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
+    
 
     Sky()
     
