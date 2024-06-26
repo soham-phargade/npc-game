@@ -6,3 +6,5 @@ pyperclip==1.9.0
 screeninfo==0.8.1
 typing_extensions==4.12.2
 ursina==7.0.0
+google-generativeai
+python-dotenv
