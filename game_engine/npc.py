@@ -1,7 +1,8 @@
 from ursina import *
-from player import Player
-from conversation import get_user_input
+import asyncio
+from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QTextEdit, QPushButton, QHBoxLayout, QDesktopWidget
 from feature_module.gemini_api import gemini
+
 
 class NPC(Entity):
     def __init__(self, player, position=(0, 0, 0), name="untitled", **kwargs):
@@ -33,32 +34,62 @@ class NPC(Entity):
             self.is_talking = False
 
         # Check for interaction
-        if distance_xz(self.position, self.player.position) <= 2:  # Interaction distance
+        if distance_xz(self.position, self.player.position) <= 2:
             if held_keys['e'] and not self.is_talking:
                 self.speech.text = f'my name is {self.name}'
                 self.is_talking = True
                 
             if held_keys['left mouse']:
-                response = self.start_conversation()
-                self.speech.text = gemini(response)
-                self.is_talking = True
+                asyncio.run(self.start_conversation())
+                
+    async def get_user_input(self):
+        app = QApplication([])
+        text_edit = QTextEdit()
+        submit_button = QPushButton("Submit")
+        cancel_button = QPushButton("Cancel")
 
-    def start_conversation(self):
-        user_input = get_user_input()
-        if user_input:
-            return user_input
-        else:
-            return ""
+        layout = QVBoxLayout()
+        layout.addWidget(text_edit)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(submit_button)
+        button_layout.addWidget(cancel_button)
+
+        layout.addLayout(button_layout)
+
+        dialog = QDialog()
+        dialog.setWindowTitle("Input Dialog")
+        dialog.setGeometry(QDesktopWidget().availableGeometry().center().x() - 200,
+                           QDesktopWidget().availableGeometry().center().y() - 150, 400, 300)
+        dialog.setLayout(layout)
+
+        def submit():
+            dialog.user_input = text_edit.toPlainText()
+            dialog.accept()
+
+        submit_button.clicked.connect(submit)
+        cancel_button.clicked.connect(dialog.reject)
+
+        if dialog.exec_() == QDialog.Accepted:
+            return dialog.user_input
+        return None
+
+    async def start_conversation(self):
+        response = await self.get_user_input()
+        if response:
+            self.speech.text = await gemini(response)
+            self.is_talking = True
         
-
+    
 
 if __name__ == '__main__':
+    from player import Player
     app = Ursina()
-    player = Player(position=(0, 20, 5))
+    player = Player(position=(10, 50, 10))
     npc1 = NPC(player, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
     
-    box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
-    text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
+    # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
+    # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
     
 
     Sky()
@@ -72,6 +103,5 @@ if __name__ == '__main__':
     def input(key):
         if key == 'escape':
             application.quit()
-    
             
     app.run()
