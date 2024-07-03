@@ -1,5 +1,5 @@
 from ursina import *
-import asyncio
+import threading
 from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QTextEdit, QPushButton, QHBoxLayout, QDesktopWidget
 from feature_module.gemini_api import gemini
 
@@ -22,6 +22,9 @@ class NPC(Entity):
             self.y = ground_check.world_point.y + self.scale_y / 2
         else:
             self.y -= self.gravity
+        
+        if self.y < -10:
+            self.y = 10
 
         # Change direction of NPC towards player
         direction = Vec3(self.player.x - self.x, 0, self.player.z - self.z).normalized()
@@ -39,10 +42,11 @@ class NPC(Entity):
                 self.speech.text = f'my name is {self.name}'
                 self.is_talking = True
                 
-            if held_keys['left mouse']:
-                asyncio.run(self.start_conversation())
+            if held_keys['left mouse'] and not self.is_talking:
+                self.is_talking = True
+                threading.Thread(target=self.get_response).start()
                 
-    async def get_user_input(self):
+    def get_user_input(self):
         app = QApplication([])
         text_edit = QTextEdit()
         submit_button = QPushButton("Submit")
@@ -73,24 +77,24 @@ class NPC(Entity):
         if dialog.exec_() == QDialog.Accepted:
             return dialog.user_input
         return None
-
-    async def start_conversation(self):
-        response = await self.get_user_input()
-        if response:
-            self.speech.text = await gemini(response)
-            self.is_talking = True
-        
     
+    def get_response(self):
+        response = self.get_user_input()
+        if response:
+            gemini_response = gemini(response)
+            print(gemini_response)
+            self.speech.text = gemini_response
+            self.is_talking = True
+
 
 if __name__ == '__main__':
     from player import Player
     app = Ursina()
-    player = Player(position=(10, 50, 10))
+    player = Player(position=(25, 100, 10))
     npc1 = NPC(player, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
     
     # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
     # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
-    
 
     Sky()
     
@@ -103,5 +107,8 @@ if __name__ == '__main__':
     def input(key):
         if key == 'escape':
             application.quit()
+            
+    def update():
+        player.update()
             
     app.run()

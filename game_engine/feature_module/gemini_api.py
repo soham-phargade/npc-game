@@ -36,23 +36,14 @@ model = genai.GenerativeModel(
   # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
-def gemini_sync(message):
+def gemini(message):
   chat_session = model.start_chat(
       history=[] # Chat history
   )
   response = chat_session.send_message(message)
   return response.text
-
-async def gemini(message):
-  loop = asyncio.get_running_loop()
-  with ThreadPoolExecutor() as pool:
-      response = await loop.run_in_executor(pool, gemini_sync, message)
-  return response
   
 if __name__ == "__main__":
-  async def main():
     user_message = input("Enter your message: ")
-    response = await gemini(user_message)
+    response = gemini(user_message)
     print("Gemini Response:", response)
-    
-  asyncio.run(main())
