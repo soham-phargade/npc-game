@@ -3,7 +3,10 @@ from game_engine.feature_module.npc_game import NPCGame
 def main():
     game = NPCGame()
     game.display_welcome_message()
-
+    
+    for i in range(1,4):
+        game.add_npc(i)
+    
     while True:
         available_npcs = game.get_available_npcs()
         print("Available NPCs: ", ' '.join(map(str, available_npcs)))

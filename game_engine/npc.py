@@ -2,18 +2,20 @@ from ursina import *
 import threading
 from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QTextEdit, QPushButton, QHBoxLayout, QDesktopWidget
 from feature_module.gemini_api import gemini
+from feature_module.npc_game import NPCGame
 
 
 class NPC(Entity):
-    def __init__(self, player, position=(0, 0, 0), name="untitled", **kwargs):
+    def __init__(self, player, npc_map, position=(0, 0, 0), name="untitled", **kwargs):
         super().__init__(position=position, **kwargs)
         self.player = player
         self.name = name
+        self.npc_map = npc_map
         self.gravity = 0.1
         self.is_talking = False
         self.speech = Text('', origin=(0,17,0), color = color.black)
-        
         self.dialogue_box = None
+        self.npc_map.add_npc(self.name)
 
     def update(self):
         # Applies gravity to NPC
@@ -44,8 +46,13 @@ class NPC(Entity):
                 threading.Thread(target=self.get_response).start()
                 
     def get_user_input(self):
-        # create a dialog box to get user input
-        app = QApplication([])
+        # Check if QApplication instance exists
+        app = QApplication.instance()
+        app_created = False
+        if app is None:
+            app = QApplication([])
+            app_created = True
+
         text_edit = QTextEdit()
         submit_button = QPushButton("Submit")
         cancel_button = QPushButton("Cancel")
@@ -72,15 +79,23 @@ class NPC(Entity):
         submit_button.clicked.connect(submit)
         cancel_button.clicked.connect(dialog.reject)
 
+        user_input = None
         if dialog.exec_() == QDialog.Accepted:
-            return dialog.user_input
-        return None
+            user_input = dialog.user_input
+
+        if app_created:
+            app.quit()
+
+        return user_input
     
     def get_response(self):
         # take input from box and generate gemini response
         response = self.get_user_input()
+        
+        print(self.npc_map.npcs)
+        
         if response:
-            gemini_response = gemini(response)
+            gemini_response = self.npc_map.interact_with_npc(self.name, response)
             print(gemini_response)
             self.speech.text = gemini_response
             self.is_talking = True
@@ -89,10 +104,16 @@ class NPC(Entity):
 if __name__ == '__main__':
     from player import Player
     app = Ursina()
+    
+    npc_map = NPCGame()
+    
     player = Player(position=(25, 50, 25))
-    npc1 = NPC(player, model = 'cube', position=(-10, 1, -10), collider='box', name='NPC1')
-    npc2 = NPC(player, model = 'cube', position=(10, 1, 10), collider='box', name='NPC2')   
+        
+    npc1 = NPC(player, npc_map, model = 'cube', position=(-10, 1, -10), collider='box', name='NPC1')
+    # npc2 = NPC(player, npc_map, model = 'cube', position=(10, 1, 10), collider='box', name='NPC2')   
 
+    print(npc_map.get_available_npcs())
+    
     # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
     # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
 
