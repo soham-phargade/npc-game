@@ -1,6 +1,5 @@
 import random
-from feature_module.gemini_api import gemini
-
+from .gemini_api import gemini
 class NPCGame:
     def __init__(self):
         self.npcs = {}  # Dictionary to store NPC interactions
@@ -14,9 +13,10 @@ class NPCGame:
 
     def interact_with_npc(self, npc_id, message):
         if npc_id in self.npcs:
-            self.npcs[npc_id].append(message)
-            
-            return gemini(message)
+            self.npcs[npc_id].append({"role":"user","parts":[message]})
+            gemini_message = gemini(message, self.npcs[npc_id]) # this needs to be edited
+            self.npcs[npc_id].append({"role":"model","parts":[gemini_message]})
+            return gemini_message
         else:
             print(f"NPC {npc_id} not found. Please try again.")
 
@@ -36,6 +36,6 @@ class NPCGame:
     def display_npc_conversation(self, npc_id):
         conversations = self.get_npc_conversation(npc_id)
         if conversations:
-            print(f"Previous conversation(s) with NPC {npc_id}: {', '.join(conversations)}")
+            print(f"Previous conversation(s) with NPC {npc_id}: {conversations}")
         else:
             print(f"No previous conversations with NPC {npc_id}.")

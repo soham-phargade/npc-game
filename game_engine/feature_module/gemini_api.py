@@ -11,10 +11,6 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-
-
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
@@ -32,13 +28,14 @@ generation_config = {
 model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
+  system_instruction="avoid using emojis",
   # safety_settings = Adjust safety settings
   # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
-def gemini(message):
+def gemini(message, history=[]):
   chat_session = model.start_chat(
-      history=[] # Chat history
+      history=history # Chat history
   )
   response = chat_session.send_message(message)
   return response.text

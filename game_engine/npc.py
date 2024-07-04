@@ -22,9 +22,6 @@ class NPC(Entity):
             self.y = ground_check.world_point.y + self.scale_y / 2
         else:
             self.y -= self.gravity
-        
-        if self.y < -10:
-            self.y = 10
 
         # Change direction of NPC towards player
         direction = Vec3(self.player.x - self.x, 0, self.player.z - self.z).normalized()
@@ -47,6 +44,7 @@ class NPC(Entity):
                 threading.Thread(target=self.get_response).start()
                 
     def get_user_input(self):
+        # create a dialog box to get user input
         app = QApplication([])
         text_edit = QTextEdit()
         submit_button = QPushButton("Submit")
@@ -79,6 +77,7 @@ class NPC(Entity):
         return None
     
     def get_response(self):
+        # take input from box and generate gemini response
         response = self.get_user_input()
         if response:
             gemini_response = gemini(response)
@@ -90,15 +89,16 @@ class NPC(Entity):
 if __name__ == '__main__':
     from player import Player
     app = Ursina()
-    player = Player(position=(25, 100, 10))
-    npc1 = NPC(player, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
-    
+    player = Player(position=(25, 50, 25))
+    npc1 = NPC(player, model = 'cube', position=(-10, 1, -10), collider='box', name='NPC1')
+    npc2 = NPC(player, model = 'cube', position=(10, 1, 10), collider='box', name='NPC2')   
+
     # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
     # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
 
     Sky()
     
-    ground = Entity(model='plane', scale=(100, -1, 100), texture='grass', collider='box')
+    ground = Entity(model='plane', scale=(100, -10, 100), texture='grass', collider='box')
 
     # Adding slopes
     slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), position=(10, 0, 0), texture='grass', collider='box')

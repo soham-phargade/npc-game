@@ -1,4 +1,4 @@
-from feature_module.npc_game import NPCGame
+from game_engine.feature_module.npc_game import NPCGame
 
 def main():
     game = NPCGame()
