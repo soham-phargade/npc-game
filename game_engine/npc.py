@@ -1,9 +1,11 @@
 from ursina import *
 import threading
 from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QTextEdit, QPushButton, QHBoxLayout, QDesktopWidget
-from feature_module.gemini_api import gemini
-from feature_module.npc_game import NPCGame
 
+if __name__ == '__main__':
+    from feature_module.npc_game import NPCGame
+else:
+    from .feature_module.npc_game import NPCGame
 
 class NPC(Entity):
     def __init__(self, player, npc_map, position=(0, 0, 0), name="untitled", **kwargs):
