@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QTextEdit, QPush
 
 if __name__ == '__main__':
     from feature_module.npc_game import NPCGame
+    from player import Player
+    
 else:
     from .feature_module.npc_game import NPCGame
 
@@ -104,34 +106,25 @@ class NPC(Entity):
 
 
 if __name__ == '__main__':
-    from player import Player
-    app = Ursina()
-    
-    npc_map = NPCGame()
-    
-    player = Player(position=(25, 50, 25))
-        
-    npc1 = NPC(player, npc_map, model = 'cube', position=(-10, 1, -10), collider='box', name='NPC1')
-    # npc2 = NPC(player, npc_map, model = 'cube', position=(10, 1, 10), collider='box', name='NPC2')   
 
-    print(npc_map.get_available_npcs())
+    app = Ursina()
+    player = Player(position=(10, 50, 10))
+    npc_map = NPCGame()
+    npc1 = NPC(player, npc_map, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
     
     # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
     # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
-
+    
     Sky()
     
-    ground = Entity(model='plane', scale=(100, -10, 100), texture='grass', collider='box')
+    ground = Entity(model='plane', scale=(100, -1, 100), texture='grass', collider='box')
 
     # Adding slopes
-    slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), position=(10, 0, 0), texture='grass', collider='box')
-    slope2 = Entity(model='plane', scale=(10, 1, 10), rotation=(0, 0, 45), position=(20, 0, 20), texture='grass', collider='box')
+    slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), 
+                    position=(10, 0, 0), texture='grass', double_sided=True, collider='box')
 
     def input(key):
         if key == 'escape':
             application.quit()
-            
-    def update():
-        player.update()
-            
+    
     app.run()

@@ -18,12 +18,11 @@ if __name__ == '__main__':
     ground = Entity(model='plane', scale=(100, -1, 100), texture='grass', collider='box')
 
     # Adding slopes
-    slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), position=(10, 0, 0), texture='grass', collider='box')
-    slope2 = Entity(model='plane', scale=(10, 1, 10), rotation=(0, 0, 45), position=(20, 0, 20), texture='grass', collider='box')
+    slope1 = Entity(model='plane', scale=(10, 1, 10), rotation=(45, 0, 0), 
+                    position=(10, 0, 0), texture='grass', double_sided=True, collider='box')
 
     def input(key):
         if key == 'escape':
             application.quit()
     
-            
     app.run()
