@@ -17,28 +17,37 @@ class NPC(Entity):
         self.npc_map = npc_map
         self.gravity = 0.1
         self.is_talking = False
-        self.speech = Text('', origin=(0,17,0), color = color.black)
+        self.speech = Text('', origin=(0,17,0), color=color.black)
         self.dialogue_box = None
         self.npc_map.add_npc(self.name)
 
     def update(self):
-        # Applies gravity to NPC
-        ground_check = raycast(self.position + Vec3(0, 1, 0), Vec3(0, -1, 0), distance=2, ignore=[self])
+        # Applies gravity while ignoring other NPCs
+        other_npcs = [npc for npc in scene.entities if isinstance(npc, NPC) and npc is not self]
+        ground_check = raycast(self.position + Vec3(0, 1, 0), Vec3(0, -1, 0), distance=2, ignore=[self] + other_npcs)
         if ground_check.hit:
             self.y = ground_check.world_point.y + self.scale_y / 2
         else:
             self.y -= self.gravity
 
+        # Collision avoidance
+        avoidance_force = Vec3(0, 0, 0)
+        for npc in other_npcs:
+            distance_to_npc = distance_xz(self.position, npc.position)
+            if distance_to_npc < 2:  # Adjust the avoidance radius as needed
+                avoidance_force += (self.position - npc.position).normalized() / distance_to_npc
+
         # Change direction of NPC towards player
         direction = Vec3(self.player.x - self.x, 0, self.player.z - self.z).normalized()
         self.rotation_y = math.degrees(math.atan2(direction.x, direction.z))
 
-        # Move NPC towards player
+        # Move NPC towards player while avoiding other NPCs
         if distance_xz(self.position, self.player.position) > 5:
-            self.position += direction * 0.1
+            movement = direction * 0.1 + avoidance_force
+            self.position += movement.normalized() * 0.1
             self.speech.text = ''
             self.is_talking = False
-
+            
         # Check for interaction
         if distance_xz(self.position, self.player.position) <= 2:
             if held_keys['e'] and not self.is_talking:
@@ -108,9 +117,11 @@ class NPC(Entity):
 if __name__ == '__main__':
 
     app = Ursina()
-    player = Player(position=(10, 50, 10))
+    player = Player(position=(10, 25, 10))
     npc_map = NPCGame()
-    npc1 = NPC(player, npc_map, model = 'cube', position=(0, 1, 0), collider='box', name='NPC1')    
+    npc1 = NPC(player, npc_map, model = 'cube', position=(-5, 1, 0), collider='box', name='NPC1')    
+    npc2 = NPC(player, npc_map, model = 'cube', position=(5, 1, 0), collider='box', name='NPC2')    
+    
     
     # box = Entity(model='cube', scale=(1, 1, 1), position=(0, 1, 0), collider='box')
     # text = Text(text='hi', parent=box, position=(0,1.5,0), origin=(0, 0), background=True, color=color.black, scale=10)
