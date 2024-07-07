@@ -17,9 +17,10 @@ class NPC(Entity):
         self.npc_map = npc_map
         self.gravity = 0.1
         self.is_talking = False
-        self.speech = Text('', origin=(0,17,0), color=color.black)
+        self.speech = Text('', origin=(0, 17, 0), color=color.black)
         self.dialogue_box = None
         self.npc_map.add_npc(self.name)
+        self.velocity = Vec3(0, 0, 0)  # Initialize velocity
 
     def update(self):
         # Applies gravity while ignoring other NPCs
@@ -30,21 +31,33 @@ class NPC(Entity):
         else:
             self.y -= self.gravity
 
-        # Collision avoidance
+        # Collision avoidance with predictive movement and damping
         avoidance_force = Vec3(0, 0, 0)
         for npc in other_npcs:
-            distance_to_npc = distance_xz(self.position, npc.position)
+            future_position = npc.position + npc.velocity * 0.1  # Predict future position
+            distance_to_npc = distance_xz(self.position, future_position)
             if distance_to_npc < 2:  # Adjust the avoidance radius as needed
-                avoidance_force += (self.position - npc.position).normalized() / distance_to_npc
+                repulsion = (self.position - future_position).normalized() / (distance_to_npc**2)
+                avoidance_force += repulsion
+
+        # Smooth the avoidance force
+        avoidance_force = avoidance_force * 0.5
 
         # Change direction of NPC towards player
         direction = Vec3(self.player.x - self.x, 0, self.player.z - self.z).normalized()
         self.rotation_y = math.degrees(math.atan2(direction.x, direction.z))
 
+        # Combine movement direction with avoidance force
+        movement = direction * 0.1 + avoidance_force
+
+        # Update velocity with damping
+        damping_factor = 0.9  # Adjust damping factor as needed
+        self.velocity = (self.velocity + movement).normalized() * 0.1
+        self.velocity *= damping_factor
+
         # Move NPC towards player while avoiding other NPCs
         if distance_xz(self.position, self.player.position) > 5:
-            movement = direction * 0.1 + avoidance_force
-            self.position += movement.normalized() * 0.1
+            self.position += self.velocity
             self.speech.text = ''
             self.is_talking = False
             
