@@ -1,6 +1,17 @@
 from game_engine.feature_module import gemini_api
 from game_engine.feature_module.gemini_api import gemini
 import random
+
+class Participant:
+    def __init__(self, id, priority_score=0):
+        self.id = id
+        self.priority_score = priority_score
+
+    def __str__(self):
+        return f"Robot {self.id}"
+
+    def __repr__(self):
+        return f"Robot {self.id}"
   
 class Game:
     def __init__(self):
@@ -28,7 +39,7 @@ class Game:
     def initialize_participants(self):
         print("Creating a game...")
         for id in range(1, self.npcs + 1):
-            self.participants.append({"id": id, "priority_score": 0})
+            self.participants.append(Participant(id, 0))
         votes = [0]*(self.npcs+1)
 
     def round_start(self):
@@ -42,12 +53,12 @@ class Game:
 
     # Collect votes
         for participant in self.participants:
-            if participant['id'] != self.player_imposter_index:
+            if participant.id != self.player_imposter_index:
             # Prompt generation and voting logic
             # prompt = f"You are Robot {participant['id']}. Based on the provided chat history, respond only with the integer index of robot who you think is the imposter."
             # vote = gemini(prompt, self.convo_history)
                 vote = random.randint(1, self.npcs)
-                print(f"Robot {participant['id']}: {vote}")
+                print(f"Robot {participant.id}: {vote}")
             else:
                 vote = int(input(f"Robot {self.player_imposter_index} (You): ").strip())
 
@@ -58,7 +69,7 @@ class Game:
     # Determine and eliminate the participant with the most votes
         if any(self.votes):
             eliminated_id = self.votes.index(max(self.votes))
-            self.participants = [p for p in self.participants if p['id'] != eliminated_id]
+            self.participants = [p for p in self.participants if p.id != eliminated_id]
             self.npcs -= 1
             print(f"Robot {eliminated_id} has been eliminated")
         else:
