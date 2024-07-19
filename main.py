@@ -1,66 +1,100 @@
 from game_engine.feature_module import gemini_api
 from game_engine.feature_module.gemini_api import gemini
+import random
   
 class Game:
     def __init__(self):
         self.convo_history = []
+        self.participants = []
+        self.votes = []
         self.npcs = 0
-        self.participants = [{"id": 0, "priority_score": 1, "last_spoken": 0}] #id 0 is user
+        self.round = 0
 
     def welcome_message(self):
-        print("Welcome to multi AI convo")
-        print("How many Robots do you want to talk to?")
+        print("Guess the imposter \n AIs vs one Human edition")
+        while True:
+            try:
+                self.npcs = int(input("How many participants would you like (at least 3)? "))
+                if self.npcs >= 3:
+                    self.player_imposter_index = random.randint(1, self.npcs)
+                    print(f"You are Robot {self.player_imposter_index}, an imposter!")
+                    self.initialize_participants()
+                    break
+                else:
+                    print("Please enter a number greater than or equal to 3.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
+
+    def initialize_participants(self):
+        print("Creating a game...")
+        for id in range(1, self.npcs + 1):
+            self.participants.append({"id": id, "priority_score": 0})
+        votes = [0]*(self.npcs+1)
+
+    def round_start(self):
+        self.round+=1
+        print(f"This is round {self.round} \nThere are {self.npcs} robots remaining")
+    
+    def elimination_voting(self):
+    # Reset votes
+        self.votes[:] = [0] * (self.npcs + 1)  # Ensure votes list matches the number of participants
+        print(f"Alright, that's the end of round {self.round}. Please vote who you think is the imposter")
+
+    # Collect votes
+        for participant in self.participants:
+            if participant['id'] != self.player_imposter_index:
+            # Prompt generation and voting logic
+            # prompt = f"You are Robot {participant['id']}. Based on the provided chat history, respond only with the integer index of robot who you think is the imposter."
+            # vote = gemini(prompt, self.convo_history)
+                vote = random.randint(1, self.npcs)
+                print(f"Robot {participant['id']}: {vote}")
+            else:
+                vote = int(input(f"Robot {self.player_imposter_index} (You): ").strip())
+
+        # Ensure the vote is within valid range
+            if 0 < vote <= self.npcs:
+                self.votes[vote] += 1
+
+    # Determine and eliminate the participant with the most votes
+        if any(self.votes):
+            eliminated_id = self.votes.index(max(self.votes))
+            self.participants = [p for p in self.participants if p['id'] != eliminated_id]
+            self.npcs -= 1
+            print(f"Robot {eliminated_id} has been eliminated")
+        else:
+            print("No valid votes received. No one is eliminated this round.")
+
+        print("Remaining Participants:", self.participants)
     
     def response(self, id, convo_history):
-        if id != 0:
-            prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly."
+        if id != self.player_imposter_index:
+            prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly. Avoid including the speaker's name in the response"
             response = gemini(prompt, convo_history)
-            self.convo_history.append({"role": f"model", "parts": [f"Robot {id}: {response}"]})
+            self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {response}"]})
             print(f"Robot {id}: {response}")
         else:
-            user_message = input("You: ").strip()
-            self.convo_history.append({"role": "user", "parts": [user_message]})
+            user_message = input(f"Robot {self.player_imposter_index} (You): ").strip()
+            #self.convo_history.append({"role": "user", "parts": [user_message]})
+            self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {user_message}"]})
         return
     
-    def initialize_participants(self):
-        for id in range(1, self.npcs + 1):
-            self.participants.append({"id": id, "priority_score": 0, "last_spoken": 0})
-        
-    def calculate_priority_score(self, participant, convo_history):
-        import random
-        relevance_score = random.random()  # Placeholder 
-        return relevance_score
-    
     def determine_next_speaker(self):
-        import random
-        next_speaker = random.randint(0,self.npcs)
+        next_speaker = random.randint(1,self.npcs)
         return next_speaker
         #Placeholder
-        '''
-        max_score = -1
-        next_speaker_index = -1
-        
-        for i, participant in enumerate(self.participants):
-            participant["priority_score"] = self.calculate_priority_score(participant, self.convo_history)
-            if participant["priority_score"] > max_score:
-                max_score = participant["priority_score"]
-                next_speaker_index = i
-
-        self.participants[next_speaker_index]["last_spoken"] = len(self.convo_history)
-        return self.participants[next_speaker_index]
-        '''
 
 def main():
     game = Game()
     game.welcome_message()
-    game.npcs = int(input())
-    game.initialize_participants()
 
-    next_speaker = 0
+    next_speaker = game.player_imposter_index #intialize the user as first speaker
 
     while True:
-        game.response(next_speaker, game.convo_history)
-        next_speaker = game.determine_next_speaker()
+        game.round_start()
+        for i in range(5):
+            game.response(next_speaker, game.convo_history)
+            next_speaker = game.determine_next_speaker()
+        game.elimination_voting()
         
 if __name__ == "__main__":
     main()
