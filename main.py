@@ -76,9 +76,8 @@ class Game:
         return
     
     def determine_next_speaker(self):
-        next_speaker = random.randint(1,self.npcs)
+        next_speaker = random.choice(list(self.participants.keys()))
         return next_speaker
-        # Placeholder
 
 def main():
     
@@ -105,6 +104,7 @@ def main():
             game.response(next_speaker, game.convo_history)
             next_speaker = game.determine_next_speaker()
         game.elimination_voting()
+        next_speaker = game.determine_next_speaker()
         
 if __name__ == "__main__":
     main()
