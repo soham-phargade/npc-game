@@ -32,35 +32,46 @@ class Game:
     def round_start(self):
         # MARK: WORKING
         self.round += 1
-        print(f"This is round {self.round} \nThere are {self.npcs} robots remaining")
-    
+        message = (f"Game Host: This is round {self.round} \nThere are {self.npcs} robots remaining")
+        self.convo_history.append({"role": "model", "parts": [f"{message}"]})
+        print(message)
+
     def elimination_voting(self):
-        # MARK: HAS LOGIC ISSUES
         # Reset votes
         for participant in self.participants.values():
             participant.votes = 0
-        
-        print(f"Alright, that's the end of round {self.round}. Please vote who you think is the imposter")
+
+        message = f"Game Host: Alright, that's the end of round {self.round}. Please vote who you think is the imposter"
+        self.convo_history.append({"role": "model", "parts": [f"{message}"]})
+        print(message)
 
         # Collect votes
         for participant_id in self.participants:
             if participant_id != self.player_imposter_index:
                 # Prompt generation and voting logic
                 # TODO: wtf is bellow, make a method to get vote as participant id and encapsulate the error check within it
-                vote = random.randint(1, self.npcs)
+                prompt = f"You are Robot {id}. Based on the provided chat history, respond only with the id number of the human imposter. Avoid including the speaker's name in the response"
+                vote = int(gemini(prompt, self.convo_history).strip())
+                self.convo_history.append({"role": "model", "parts": [f"Robot {participant_id}: {vote}"]})
                 print(f"Robot {participant_id}: {vote}")
             else:
                 # TODO: error check for user input
                 vote = int(input(f"Robot {self.player_imposter_index} (You): ").strip())
+                self.convo_history.append({"role": "model", "parts": [f"Robot {self.player_imposter_index}: {vote}"]})
             
-            self.participants[participant_id].votes += 1
+            self.participants[vote].votes += 1
         
         # Determine and eliminate the participant with the most votes
         eliminated_id = max(self.participants, key=lambda x: self.participants[x].votes)
         del self.participants[eliminated_id]
         self.npcs -= 1
-        print(f"Robot {eliminated_id} has been eliminated")
-        print("Remaining Participants:", self.participants)
+        
+        message2 = f"Game Host: Robot {eliminated_id} has been eliminated"
+        self.convo_history.append({"role": "model", "parts": [f"{message2}"]})
+        print(message2)
+        message3 = f"Game Host: Remaining Participants - {self.participants}"
+        self.convo_history.append({"role": "model", "parts": [f"{message3}"]})
+        print(message3)
     
     def response(self, id, convo_history):
         # MARK: Maybe check id in the print statements
@@ -81,7 +92,10 @@ class Game:
 
 def main():
     
-    print("Guess the imposter \nAIs vs one Human edition")
+    message = "Guess the imposter \nAIs vs one Human edition"
+    message2 = "The AI vs. human imposter game involves players trying to identify which participant, among AI-controlled Robots, is actually a human imposter by analyzing conversation and behavior clues."
+    print(message)
+    print(message2)
     
     while True:
         try:
@@ -96,7 +110,12 @@ def main():
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
+    game.convo_history.append({"role": "model", "parts": [f"{message}"]})
+    game.convo_history.append({"role": "model", "parts": [f"{message2}"]})
+
+
     next_speaker = game.player_imposter_index #intialize the user as first speaker
+    #next_speaker = game.determine_next_speaker()
 
     while True:
         game.round_start()
