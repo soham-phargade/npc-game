@@ -10,6 +10,8 @@ https://ai.google.dev/gemini-api/docs/get-started/python
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from google.generativeai import generative_models
+from google.generativeai.types import generation_types
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -37,8 +39,13 @@ def gemini(message, history=[]):
   chat_session = model.start_chat(
       history=history # Chat history
   )
-  response = chat_session.send_message(message)
-  return response.text
+  try: 
+    response = chat_session.send_message(message)
+    return response.text
+  except generation_types.StopCandidateException as e:
+    print(f"Safety filter triggered: {e}")
+    return "Sorry, I can't respond to that. Please try a different question."
+     
   
 if __name__ == "__main__":
     user_message = input("Enter your message: ")

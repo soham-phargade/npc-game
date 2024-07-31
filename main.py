@@ -50,8 +50,8 @@ class Game:
             if participant_id != self.player_imposter_index:
                 # Prompt generation and voting logic
                 # TODO: wtf is bellow, make a method to get vote as participant id and encapsulate the error check within it
-                prompt = f"You are Robot {id}. Based on the provided chat history, respond only with the id number of the human imposter. Avoid including the speaker's name in the response"
-                vote = int(gemini(prompt, self.convo_history).strip())
+                prompt = f"You are Robot {participant_id}. Based on the provided chat history, respond only with the integer id number of the human imposter. Avoid including the speaker's name in the response"
+                vote = int(gemini(prompt, self.convo_history).strip()) 
                 self.convo_history.append({"role": "model", "parts": [f"Robot {participant_id}: {vote}"]})
                 print(f"Robot {participant_id}: {vote}")
             else:
@@ -78,7 +78,7 @@ class Game:
         if id != self.player_imposter_index:
             # TODO: prompt engineering for line bellow
             prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly. Avoid including the speaker's name in the response"
-            response = gemini(prompt, convo_history)
+            response = gemini(prompt, convo_history).strip()
             self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {response}"]})
             print(f"Robot {id}: {response}")
         else:
@@ -110,8 +110,8 @@ def main():
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
-    game.convo_history.append({"role": "model", "parts": [f"{message}"]})
-    game.convo_history.append({"role": "model", "parts": [f"{message2}"]})
+    game.convo_history.append({"role": "model", "parts": [f"Game Host: {message}"]})
+    game.convo_history.append({"role": "model", "parts": [f"Game Host: {message2}"]})
 
 
     next_speaker = game.player_imposter_index #intialize the user as first speaker
