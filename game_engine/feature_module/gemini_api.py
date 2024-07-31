@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from google.generativeai import generative_models
 from google.generativeai.types import generation_types
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -31,7 +32,10 @@ model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
   system_instruction="avoid using emojis",
-  # safety_settings = Adjust safety settings
+  safety_settings={
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    }
   # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
