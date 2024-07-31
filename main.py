@@ -63,8 +63,19 @@ class Game:
         
         # Determine and eliminate the participant with the most votes
         eliminated_id = max(self.participants, key=lambda x: self.participants[x].votes)
-        del self.participants[eliminated_id]
-        self.npcs -= 1
+        
+        if eliminated_id == self.player_imposter_index:
+            message = f"Game Host: Robot {eliminated_id} has been eliminated. The human imposter has been caught!"
+            print(message)
+            return False
+        else:
+            del self.participants[eliminated_id]
+            self.npcs -= 1
+      
+        if len(self.participants.keys()) <= 2:
+            message = f"Game Host: Robot {eliminated_id} has been eliminated. The human imposter has won"
+            print(message)
+            return False
         
         message2 = f"Game Host: Robot {eliminated_id} has been eliminated"
         self.convo_history.append({"role": "model", "parts": [f"{message2}"]})
@@ -122,7 +133,8 @@ def main():
         for _ in range(5):
             game.response(next_speaker, game.convo_history)
             next_speaker = game.determine_next_speaker()
-        game.elimination_voting()
+        if game.elimination_voting() == False:
+            break
         next_speaker = game.determine_next_speaker()
         
 if __name__ == "__main__":
