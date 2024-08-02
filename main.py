@@ -49,7 +49,6 @@ class Game:
         for participant_id in self.participants:
             if participant_id != self.player_imposter_index:
                 # Prompt generation and voting logic
-                # TODO: wtf is bellow, make a method to get vote as participant id and encapsulate the error check within it
                 prompt = f"You are Robot {participant_id}. Based on the provided chat history, respond only with the integer id number of the human imposter. Avoid including the speaker's name in the response"
                 vote = int(gemini(prompt, self.convo_history).strip()) 
                 self.convo_history.append({"role": "model", "parts": [f"Robot {participant_id}: {vote}"]})
@@ -108,6 +107,7 @@ def main():
     print(message)
     print(message2)
     
+    #need to put an upper bound on number of players
     while True:
         try:
             npc_count = int(input("How many participants would you like (at least 3)? "))
