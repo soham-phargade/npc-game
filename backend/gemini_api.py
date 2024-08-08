@@ -31,22 +31,30 @@ generation_config = {
 model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
-  system_instruction="avoid using emojis",
+  # https://ai.google.dev/gemini-api/docs/system-instructions?lang=python
+  system_instruction="""
+  You are a contestant on a game show. Among the robots \
+  surrounding you, 1 is a human imposter and the rest are \
+  machines just like you. You must identify the human imposter by having a conversation each round and deducing \
+  which Robot gives the most human-like response from the questions asked (generally moral questions). At the end of the round, there will be a round of voting to cast \
+  suspicion on who the crowd thinks the imposter is. The imposter will try to blend in and avoid detection. \
+  """,
+  # See https://ai.google.dev/gemini-api/docs/safety-settings
   safety_settings={
         HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     }
-  # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
-def gemini(message, history=[]):
+def gemini(message, history=[]): 
   chat_session = model.start_chat(
       history=history # Chat history
   )
   try: 
     response = chat_session.send_message(message)
     return response.text
+  
   except generation_types.StopCandidateException as e:
     print(f"Safety filter triggered: {e}")
     return "Sorry, I can't respond to that. Please try a different question."

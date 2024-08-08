@@ -23,13 +23,11 @@ class Game:
         self.round = 0
 
     def initialize_participants(self):
-        # MARK: WORKING
         print("Creating a game...")
         for id in range(1, self.npcs + 1):
             self.participants[id] = (Participant(id, 0))
 
     def round_start(self):
-        # MARK: WORKING
         self.round += 1
         message = (f"Game Host: This is round {self.round} \nThere are {self.npcs} robots remaining")
         self.convo_history.append({"role": "model", "parts": [f"{message}"]})
@@ -83,7 +81,6 @@ class Game:
         print(message3)
     
     def response(self, id, convo_history):
-        # MARK: Maybe check id in the print statements
         if id != self.player_imposter_index:
             # TODO: prompt engineering for line bellow
             prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly. Avoid including the speaker's name in the response"
