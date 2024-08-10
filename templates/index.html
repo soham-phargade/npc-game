@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Python Script</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div id="ui-elements">
+        <div id="player-info">You are Robot {{ player_id }}</div>
+        <div id="players-remaining">Robots remaining: {{ players_remaining }}</div>
+    </div>
+    <div id="chat">
+        <div id="history">
+            {% for entry in history %}
+            <div class="entry">
+                <div class="input"><strong>Input:</strong> {{ entry.input }}</div>
+                <div class="output"><strong>Output:</strong> {{ entry.output }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" autocomplete="off">
+            <input type="text" name="input_text" placeholder="Enter your input" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

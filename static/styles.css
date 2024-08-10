@@ -1,0 +1,92 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background: linear-gradient(135deg, #001f3f, #001a29); /* Dark blue to black gradient */
+    color: #0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+#ui-elements {
+    width: 80%;
+    max-width: 800px; /* Optional: Limits the maximum width */
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#chat {
+    width: 80%;
+    max-width: 800px; /* Optional: Limits the maximum width */
+    padding: 20px;
+    border: 1px solid #0f0;
+    background: #111;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#history {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #0f0;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.entry {
+    margin-bottom: 10px;
+}
+
+.input {
+    color: #0ff;
+}
+
+.output {
+    color: #0f0;
+}
+
+input[type="text"] {
+    width: calc(100% - 20px);
+    height: 50px;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #222;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #0f0;
+    color: #111;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Scrollbar styles for Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #0f0;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #222;
+    border-radius: 8px;
+}
+
+/* Scrollbar styles for Firefox */
+.scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: #0f0 #222;
+}
