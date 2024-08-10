@@ -18,12 +18,13 @@ class Participant:
         return f"Robot {self.id}"
 
 class Game:
-    def __init__(self, npc_count=3, output_func=print):
+    def __init__(self, npc_count=3, input_func=input,output_func=print):
         self.convo_history = []
         self.participants = {}
         self.npcs = npc_count
         self.player_imposter_index = random.randint(1, self.npcs)
         self.round = 0
+        self.input_func = input_func
         self.output_func = output_func
 
         for id in range(1, self.npcs + 1):
@@ -42,7 +43,7 @@ class Game:
 
         message = f"Game Host: Alright, that's the end of round {self.round}. Please vote who you think is the imposter"
         self.convo_history.append({"role": "model", "parts": [f"{message}"]})
-        print(message)
+        self.output_func(message)
 
         # Collect votes
         for participant_id in self.participants:
@@ -51,10 +52,11 @@ class Game:
                 prompt = f"You are Robot {participant_id}. Based on the provided chat history, respond only with the integer id number of the human imposter. Avoid including the speaker's name in the response"
                 vote = int(gemini(prompt, self.convo_history).strip()) 
                 self.convo_history.append({"role": "model", "parts": [f"Robot {participant_id}: {vote}"]})
-                print(f"Robot {participant_id}: {vote}")
+                self.output_func(f"Robot {participant_id}: {vote}")
             else:
                 # TODO: error check for user input
-                vote = int(input(f"Robot {self.player_imposter_index} (You): ").strip())
+                # vote = int(self.input_func(f"Robot {self.player_imposter_index} (You): ").strip())
+                vote = int(self.input_func().strip())
                 self.convo_history.append({"role": "model", "parts": [f"Robot {self.player_imposter_index}: {vote}"]})
             
             self.participants[vote].votes += 1
@@ -64,7 +66,7 @@ class Game:
         
         if eliminated_id == self.player_imposter_index:
             message = f"Game Host: Robot {eliminated_id} has been eliminated. The human imposter has been caught!"
-            print(message)
+            self.output_func(message)
             return False
         else:
             del self.participants[eliminated_id]
@@ -72,16 +74,16 @@ class Game:
       
         if len(self.participants.keys()) <= 2:
             message = f"Game Host: Robot {eliminated_id} has been eliminated. The human imposter has won"
-            print(message)
+            self.output_func(message)
             return False
 
         elimination_message = f"Game Host: Robot {eliminated_id} has been eliminated"
         self.convo_history.append({"role": "model", "parts": [f"{elimination_message}"]})
-        print(elimination_message)
+        self.output_func(elimination_message)
         
         remaining_message = f"Game Host: Remaining Participants - {self.participants}"
         self.convo_history.append({"role": "model", "parts": [f"{remaining_message}"]})
-        print(remaining_message)
+        self.output_func(remaining_message)
     
     def response(self, id, convo_history):
         if id != self.player_imposter_index:
@@ -89,9 +91,10 @@ class Game:
             prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly. Avoid including the speaker's name in the response"
             response = gemini(prompt, convo_history).strip()
             self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {response}"]})
-            print(f"Robot {id}: {response}")
+            self.output_func(f"Robot {id}: {response}")
         else:
-            user_message = input(f"Robot {self.player_imposter_index} (You): ").strip()
+            # user_message = self.input_func(f"Robot {self.player_imposter_index} (You): ").strip()
+            user_message = self.input_func().split()
             self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {user_message}"]})
     
     def determine_next_speaker(self):
