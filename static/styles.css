@@ -1,13 +1,21 @@
 body {
     font-family: 'Courier New', Courier, monospace;
-    background: linear-gradient(135deg, #021b35, #000000); /* Dark blue to black gradient */
+    background: linear-gradient(135deg, #001f3f, #001a29); /* Dark blue to black gradient */
     color: #0f0;
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     height: 100vh; /* Full viewport height */
+}
+
+#ui-elements {
+    width: 80%;
+    max-width: 800px; /* Optional: Limits the maximum width */
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 #chat {
@@ -17,6 +25,7 @@ body {
     border: 1px solid #0f0;
     background: #111;
     border-radius: 8px;
+    margin-top: 10px;
 }
 
 #history {
@@ -60,23 +69,24 @@ button {
     border-radius: 4px;
     cursor: pointer;
 }
-/* For Webkit browsers (Chrome, Safari) */
+
+/* Scrollbar styles for Webkit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
-    width: 8px; /* Adjust width as needed */
+    width: 12px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgb(21, 163, 21); /* Thumb color */
-    border-radius: 8px; /* Rounded corners */
+    background-color: #0f0;
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: #222; /* Track color */
-    border-radius: 8px; /* Rounded corners */
+    background-color: #222;
+    border-radius: 8px;
 }
 
-/* For Firefox */
+/* Scrollbar styles for Firefox */
 .scrollable {
-    scrollbar-width: thin; /* Can be 'auto' or 'thin' */
-    scrollbar-color: #0f0 #222; /* Thumb color and track color */
+    scrollbar-width: thin;
+    scrollbar-color: #0f0 #222;
 }

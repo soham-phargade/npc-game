@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <div id="ui-elements">
+        <div id="player-info">You are Robot {{ player_id }}</div>
+        <div id="players-remaining">Robots remaining: {{ players_remaining }}</div>
+    </div>
     <div id="chat">
         <div id="history">
             {% for entry in history %}
@@ -17,7 +21,7 @@
             {% endfor %}
         </div>
 
-        <form method="post">
+        <form method="post" autocomplete="off">
             <input type="text" name="input_text" placeholder="Enter your input" required>
             <button type="submit">Submit</button>
         </form>
