@@ -12,6 +12,7 @@ def flask_output(output):
     
 
 app = Flask(__name__)
+players_remaining = "5"
 history = []
 game = Game(3, flask_input, flask_output)
 game.round_start()
@@ -19,18 +20,17 @@ user_index = game.player_imposter_index
 
 
 @app.route('/', methods=['GET', 'POST'])
-async def index():
-    next_speaker = game.player_imposter_index
-    game.response(next_speaker, game.convo_history)
-    next_speaker = game.determine_next_speaker()
-    game.response(next_speaker, game.convo_history)
-    
+async def index():    
     if request.method == 'POST':
         user_input = flask_input()
         if user_input:
             history.append({'input': user_input, 'output': user_input})
 
-    return render_template('index.html', history=history)
+    return render_template('index.html', 
+                           user_index=user_index, 
+                           players_remaining=players_remaining, 
+                           history=history,
+                           participants=game.participants.keys())
 
 if __name__ == '__main__':
     app.run(debug=True)

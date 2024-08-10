@@ -7,12 +7,29 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div id="ui-elements">
-        <div id="player-info">You are Robot {{ player_id }}</div>
-        <div id="players-remaining">Robots remaining: {{ players_remaining }}</div>
+    <!-- <div id="ui-elements">
+        <div id="player-info">You are player: {{ user_index }}</div>
+        <div id="players-remaining">Players remaining: {{ players_remaining }}</div>
     </div>
+     -->
+    <div id="avatars">
+        {% for i in range(1, 8) %}
+            {% if i == user_index %}
+                <img src="{{ url_for('static', filename='human_among_us.png') }}" alt="Human" class="avatar">
+            {% elif i in participants %}
+                <img src="{{ url_for('static', filename='robot_among_us.png') }}" alt="Robot" class="avatar">
+            {% else %}
+                {% if i == user_index %}
+                    <img src="{{ url_for('static', filename='eliminated_human_among_us.png') }}" alt="Eliminated Human" class="avatar">
+                {% else %}
+                    <img src="{{ url_for('static', filename='eliminated_robot_among_us.png') }}" alt="Eliminated Robot" class="avatar">
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+
     <div id="chat">
-        <div id="history">
+        <div id="history" class="scrollable">
             {% for entry in history %}
             <div class="entry">
                 <div class="input"><strong>Input:</strong> {{ entry.input }}</div>
@@ -21,7 +38,7 @@
             {% endfor %}
         </div>
 
-        <form method="post" autocomplete="off">
+        <form method="post">
             <input type="text" name="input_text" placeholder="Enter your input" required>
             <button type="submit">Submit</button>
         </form>

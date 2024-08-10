@@ -7,6 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Center content vertically */
     height: 100vh; /* Full viewport height */
 }
 
@@ -16,6 +17,18 @@ body {
     padding: 10px;
     text-align: center;
     margin-top: 20px;
+}
+
+#avatars {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.avatar {
+    width: 40px; /* Adjust size as needed */
+    height: 40px; /* Adjust size as needed */
+    margin: 0 5px; /* Space between images */
 }
 
 #chat {
