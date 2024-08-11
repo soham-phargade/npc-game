@@ -2,9 +2,8 @@ from flask import Flask, request, render_template
 from backend import Game
 
 def flask_input():
-    while True:
-        if request.method == 'POST':
-            return request.form['input_text']
+    if request.method == 'POST':
+        return request.form['input_text']
 
 def flask_output(output):
     global history
@@ -20,7 +19,7 @@ user_index = game.player_imposter_index
 
 
 @app.route('/', methods=['GET', 'POST'])
-async def index():    
+def index():    
     if request.method == 'POST':
         user_input = flask_input()
         if user_input:
