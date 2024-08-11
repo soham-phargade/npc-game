@@ -85,16 +85,16 @@ class Game:
         self.convo_history.append({"role": "model", "parts": [f"{remaining_message}"]})
         self.output_func(remaining_message)
     
-    def response(self, id, convo_history):
+    def response(self, id):
         if id != self.player_imposter_index:
             # TODO: prompt engineering for line bellow
             prompt = f"You are Robot {id}. Based on the provided chat history, respond briefly. Avoid including the speaker's name in the response"
-            response = gemini(prompt, convo_history).strip()
+            response = gemini(prompt, self.convo_history).strip()
             self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {response}"]})
             self.output_func(f"Robot {id}: {response}")
         else:
             # user_message = self.input_func(f"Robot {self.player_imposter_index} (You): ").strip()
-            user_message = self.input_func().split()
+            user_message = self.input_func()
             self.convo_history.append({"role": "model", "parts": [f"Robot {id}: {user_message}"]})
     
     def determine_next_speaker(self):
