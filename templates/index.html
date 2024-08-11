@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="avatars">
-        {% for i in range(1, 8) %}
+        {% for i in range(1, (number_of_players+1)) %}
             {% if i == user_index %}
                 <img src="{{ url_for('static', filename='human_among_us.png') }}" alt="Human" class="avatar">
             {% elif i in participants %}

@@ -12,9 +12,10 @@ def flask_output(output):
 
 app = Flask(__name__)
 history = []
-game = Game(3, flask_input, flask_output)
+game = Game(7, flask_input, flask_output)
 game.round_start()
 user_index = game.player_imposter_index
+number_of_players = len(game.participants.keys())
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -27,6 +28,7 @@ def index():
     return render_template('index.html', 
                            user_index=user_index, 
                            history=history,
+                           number_of_players=number_of_players,
                            participants=game.participants.keys())
 
 if __name__ == '__main__':
