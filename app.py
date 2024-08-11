@@ -11,7 +11,6 @@ def flask_output(output):
     
 
 app = Flask(__name__)
-players_remaining = "5"
 history = []
 game = Game(3, flask_input, flask_output)
 game.round_start()
@@ -27,7 +26,6 @@ def index():
 
     return render_template('index.html', 
                            user_index=user_index, 
-                           players_remaining=players_remaining, 
                            history=history,
                            participants=game.participants.keys())
 

@@ -7,11 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <!-- <div id="ui-elements">
-        <div id="player-info">You are player: {{ user_index }}</div>
-        <div id="players-remaining">Players remaining: {{ players_remaining }}</div>
-    </div>
-     -->
     <div id="avatars">
         {% for i in range(1, 8) %}
             {% if i == user_index %}
@@ -38,7 +33,7 @@
             {% endfor %}
         </div>
 
-        <form method="post">
+        <form method="post" autocomplete="off">
             <input type="text" name="input_text" placeholder="Enter your input" required>
             <button type="submit">Submit</button>
         </form>
