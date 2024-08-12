@@ -13,7 +13,8 @@ def flask_output(output):
 app = Flask(__name__)
 history = []
 game = Game(7, flask_input, flask_output)
-game.round_start()
+#game.round_start()
+game.elimination_voting()
 user_index = game.player_imposter_index
 number_of_players = len(game.participants.keys())
 
