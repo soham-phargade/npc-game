@@ -73,7 +73,7 @@ class Game:
             return False
 
         message2 = f"Game Host: Robot {eliminated_id} has been eliminated."
-        message3 = f"Game Host: Remaining Participants - {self.participants}"
+        message3 = f"Game Host: Remaining Participants - {len(self.participants)}"
         self.convo_history.append({"role": "model", "parts": [message2]})
         console.print(Panel(message2, title="Elimination Result", expand=False))
         self.convo_history.append({"role": "model", "parts": [message3]})
