@@ -39,4 +39,7 @@ python main.py
 ```
 
 ## Built with
-- Gemini 
+* Gemini API 
+* Flask
+* HTML/CSS
+* Python
