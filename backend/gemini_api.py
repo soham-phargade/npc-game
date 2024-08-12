@@ -38,6 +38,7 @@ model = genai.GenerativeModel(
   machines just like you. You must identify the human imposter by having a conversation each round and deducing \
   which Robot gives the most human-like response from the questions asked (generally moral questions). At the end of the round, there will be a round of voting to cast \
   suspicion on who the crowd thinks the imposter is. The imposter will try to blend in and avoid detection. \
+  During the voting section, do not vote for yourself
   """,
   # See https://ai.google.dev/gemini-api/docs/safety-settings
   safety_settings={

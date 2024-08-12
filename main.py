@@ -3,6 +3,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 import random
+import time
 
 console = Console()
 
@@ -51,6 +52,7 @@ class Game:
                 vote = int(gemini(prompt, self.convo_history).strip())
                 self.convo_history.append({"role": "model", "parts": [f"Robot {participant_id}: {vote}"]})
                 console.print(f"[bold cyan]Robot {participant_id}: {vote}[/bold cyan]")
+                time.sleep(2)
             else:
                 vote = int(console.input(f"[bold yellow]Robot {self.player_imposter_index} (You): [/bold yellow]").strip())
                 self.convo_history.append({"role": "model", "parts": [f"Robot {self.player_imposter_index}: {vote}"]})
@@ -73,11 +75,13 @@ class Game:
             return False
 
         message2 = f"Game Host: Robot {eliminated_id} has been eliminated."
-        message3 = f"Game Host: Remaining Participants - {len(self.participants)}"
+        participant_list = [f"Robot {str(key)}" for key in self.participants.keys()]
+        message3 = f"Game Host: Remaining Participants - {', '.join(participant_list)}"
         self.convo_history.append({"role": "model", "parts": [message2]})
         console.print(Panel(message2, title="Elimination Result", expand=False))
         self.convo_history.append({"role": "model", "parts": [message3]})
         console.print(Panel(message3, title="Remaining Participants", expand=False))
+        return True
     
     def response(self, id, convo_history):
         if id != self.player_imposter_index:
@@ -119,11 +123,13 @@ def main():
     while True:
         game.round_start()
         for _ in range(5):
+            time.sleep(1.5)
             game.response(next_speaker, game.convo_history)
             next_speaker = game.determine_next_speaker()
         if not game.elimination_voting():
             break
         next_speaker = game.determine_next_speaker()
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
