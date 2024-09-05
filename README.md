@@ -1,18 +1,24 @@
-# Delhi Become Robot (temporary name)
+# Bot or Not
 
 ## App Description
 
-Imagine a world where the line between human and artificial intelligence blurs, making perception the ultimate challenge. Welcome to TEMP, a revolutionary game inspired by the reverse Turing test. Unlike traditional tests aimed at identifying robots among humans, TEMP challenges players to blend in as a human imposter among AI-controlled robots.
+### Overview
+Welcome to Bot or Not, a unique game experience that challenges the boundaries between human intelligence and AI. Inspired by the reverse Turing test, this game flips the traditional script—rather than identifying robots among humans, players must blend in as human imposters among AI-controlled robots.
 
-In TEMP, players navigate a series of tense rounds populated by "robots." However, one of these robots is actually a human imposter. The objective is clear: blend in seamlessly or risk exposure and elimination.
+### Gameplay
+In Bot or Not, you'll engage in a series of rounds where the goal is to seamlessly integrate into a group of "robots." However, one of these robots is actually a human imposter— you. The challenge? Avoid detection while navigating through each round's conversation and voting phases.
 
-Each round unfolds in stages of gripping interaction. Participants engage in a conversation stage where moral questions probe ethics and reasoning, setting the stage for subtle deception and strategy.
+### How It Works
+Conversation Stage: Each round kicks off with a discussion where players respond to moral and ethical questions. Here’s your chance to subtly deceive others and blend in with the AI.
 
-As tension mounts, the voting phase begins. Every "robot" casts a ballot, aiming to identify the human imposter. With each elimination, the stakes rise, hinging on the player’s ability to evade detection and outwit the AI.
+Voting Phase: Once the conversation concludes, the "robots" vote on who they believe the human imposter is. If you’re the human, your goal is to avoid being picked. If you’re not, you need to spot the imposter before they outwit you.
 
-Victory in TEMP is a testament to adaptability. The player triumphs by surviving to the final stages, standing among the last two robots. Defeat is humbling for those who fail to convincingly integrate into the robotic facade and fall victim to collective scrutiny.
+Elimination: With every vote, the stakes get higher. Players are eliminated one by one until only two robots remain. Victory belongs to those who can successfully blend in and avoid detection until the end.
 
-TEMP challenges perceptions, offering a compelling blend of psychological intrigue and strategic gameplay. Are you ready to embrace the challenge? Step into the arena, where every word and action could mean the difference between survival and exposure.
+### Why Play?
+Bot or Not isn’t just a game—it’s a test of perception, strategy, and adaptability. Each decision you make could mean the difference between winning and being exposed. Whether you’re fooling others or identifying the imposter, every round is a new challenge that sharpens your skills in deception and deduction.
+
+Are you ready to face the ultimate test? Join Bot or Not and find out if you have what it takes to survive in a world where perception is everything.
 
 ## Installation
 
